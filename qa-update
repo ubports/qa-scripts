@@ -11,4 +11,4 @@ fi
 mount -o rw,remount /
 
 apt update
-apt upgrade
+apt dist-upgrade

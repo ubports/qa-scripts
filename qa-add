@@ -20,4 +20,4 @@ EOL
 fi
 
 apt update
-apt upgrade
+apt dist-upgrade
