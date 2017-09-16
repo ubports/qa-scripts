@@ -5,7 +5,7 @@ Messy scrips for updating your device using ubports dev ppa
 ## Install
 
 ```
-wget -qO - https://raw.githubusercontent.com/mariogrip/qa-scripts/master/qa-install | bash
+wget -qO - https://raw.githubusercontent.com/ubports/qa-scripts/master/qa-install | bash
 ```
 
 
