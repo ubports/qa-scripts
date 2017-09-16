@@ -5,8 +5,8 @@
 
 mount -o rw,remount /
 
-wget -P /usr/bin https://raw.githubusercontent.com/mariogrip/qa-scripts/master/qa-update
-wget -P /usr/bin https://raw.githubusercontent.com/mariogrip/qa-scripts/master/qa-add
+wget -P /usr/bin https://raw.githubusercontent.com/ubports/qa-scripts/master/qa-update
+wget -P /usr/bin https://raw.githubusercontent.com/ubports/qa-scripts/master/qa-add
 
 chmod +x /usr/bin/qa-update
 chmod +x /usr/bin/qa-add
