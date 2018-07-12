@@ -1,0 +1,4 @@
+qa-add /usr/bin
+qa-install /usr/bin
+qa-remove /usr/bin
+qa-update /usr/bin
