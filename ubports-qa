@@ -1,0 +1,125 @@
+#!/usr/bin/python3
+
+import requests, subprocess, os, argparse
+from enum import Enum
+
+GITHUB_API_PULLREQUEST="https://api.github.com/repos/ubports/%s/pulls/%s"
+JENKINS_API_BUILD="https://ci.ubports.com/blue/rest/organizations/jenkins/pipelines/%s/branches/%s"
+REPO="http://repo.ubports.com/dists/%s/main/binary-armhf/Packages"
+
+class Status(Enum):
+    SUCCESS = 1
+    BULDING = 2
+    FAILED = 3
+
+def mount():
+    subprocess.call(["mount", "-o", "rw,remount", "/"])
+
+def umount():
+    subprocess.call(["mount", "-o", "ro,remount", "/"])
+
+def apt_update():
+    subprocess.call(["apt", "update"])
+
+def apt_upgrade():
+    subprocess.call(["apt", "upgrade"])
+
+def get_list_file(branch):
+    return "/etc/apt/sources.list.d/ubports-%s.list" % branch
+
+def get_pref_file(branch):
+    return "/etc/apt/preferences.d/ubports-%s.pref" % branch
+
+def list_exists(branch):
+    return os.path.isfile(get_list_file(branch))
+
+def list_lists():
+    return [f.split("ubports-")[1].split(".list")[0]
+           for f in os.listdir("/etc/apt/preferences.d")
+           if os.path.isfile(f) and f.startswith("ubports-")]
+
+def add_list(branch):
+    if list_exists(branch):
+        return
+    with open(get_list_file(branch),"w+") as list:
+        list.write("deb http://repo.ubports.com/ %s main" % branch)
+
+def remove_list(branch):
+    # If it does not exist, just ignore
+    if not list_exists(branch):
+        return
+    os.remove(get_list_file(branch))
+
+def get_github_pr(repo, num):
+    return requests.get(GITHUB_API_PULLREQUEST % (repo, num)).json()
+
+def get_jenkins_build(repo, ref):
+    ret = requests.get(JENKINS_API_BUILD % (repo, ref))
+    if ret.status_code != 200:
+        print("Not found")
+        exit()
+    return ret.json()
+
+def get_issue_status(repo, ref):
+    build = get_jenkins_build(repo, ref)["latestRun"]
+    print(build)
+    if build["result"] == "SUCCESS":
+        return Status.SUCCESS
+    elif build["result"] == "BULDING":
+        return Status.BULDING
+    else:
+        return Status.FAILED
+
+def get_issue_branch(repo, num):
+    return get_github_pr(repo, num)["head"]["ref"]
+
+def die(m):
+    print(m)
+    exit()
+
+def install(args):
+    if args.pr != -1:
+        ref = get_issue_branch(args.repo, args.pr);
+        status = get_issue_status(args.repo, ref);
+        if status == Status.FAILED:
+            die("Issue failed to build")
+        if status == Status.BUILDING:
+            die("Issue is currently building")
+    add_list(args.repo)
+    apt_update()
+    apt_upgrade()
+
+def remove(args):
+    if not list_exists(args.repo):
+        die("Repo %s is not installed" % args.repo)
+    remove_list(args.repo)
+
+def list(args):
+    print(" ".join(list_lists()))
+
+def update(args):
+    mount()
+    apt_update()
+    apt_upgrade()
+    umount()
+
+parser = argparse.ArgumentParser(description='UBports qa scripts')
+subparsers = parser.add_subparsers(help='')
+
+parser_inst = subparsers.add_parser('install', help='Add pr to install')
+parser_inst.add_argument('repo', type=str, help='Repo')
+parser_inst.add_argument('pr', type=int, help='Pr id to install', nargs='?', default=-1)
+parser_inst.set_defaults(func=install)
+
+parser_rem = subparsers.add_parser('remove', help='Remove installed repo')
+parser_rem.add_argument('repo', type=str, help='Repo')
+parser_rem.set_defaults(func=remove)
+
+parser_list = subparsers.add_parser('list', help='List installed repos')
+parser_list.set_defaults(func=list)
+
+parser_up = subparsers.add_parser('update', help='Update system using apt')
+parser_up.set_defaults(func=update)
+
+args = parser.parse_args()
+args.func(args)
