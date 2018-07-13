@@ -9,6 +9,6 @@ Vcs-Git: git@github.com:ubports/qa-scripts.git
 
 Package: ubports-qa-scripts
 Architecture: all
-Depends: ${misc:Depends}
+Depends: ${misc:Depends}, python3-requests
 Description: UBports QA scripts
  Useful scripts to automate root file system updates from the UBports repo
