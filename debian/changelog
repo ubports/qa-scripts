@@ -1,4 +1,4 @@
-ubports-qa-scripts (0.1+ubports1) xenial; urgency=medium
+ubports-qa-scripts (0.1) xenial; urgency=medium
 
   * Update to unified script mode
 
