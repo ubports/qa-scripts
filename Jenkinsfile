@@ -11,13 +11,13 @@ pipeline {
     stage('Build binary - armhf') {
       steps {
         parallel(
-          "Build binary - armhf": {
+	  "Build binary - arm64": {
             node(label: 'arm64') {
               cleanWs(cleanWhenAborted: true, cleanWhenFailure: true, cleanWhenNotBuilt: true, cleanWhenSuccess: true, cleanWhenUnstable: true, deleteDirs: true)
               unstash 'source'
-              sh '''export architecture="armhf"
-build-binary.sh'''
-              stash(includes: '*.gz,*.bz2,*.xz,*.deb,*.dsc,*.changes,*.buildinfo,lintian.txt', name: 'build-armhf')
+              sh '''export architecture="arm64"
+    build-binary.sh'''
+              stash(includes: '*.gz,*.bz2,*.xz,*.deb,*.dsc,*.changes,*.buildinfo,lintian.txt', name: 'build-arm64')
               cleanWs(cleanWhenAborted: true, cleanWhenFailure: true, cleanWhenNotBuilt: true, cleanWhenSuccess: true, cleanWhenUnstable: true, deleteDirs: true)
             }
           }
