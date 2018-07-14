@@ -1,0 +1,11 @@
+ubports-qa-scripts (0.1) xenial; urgency=medium
+
+  * Update to unified script mode
+
+ -- Florian Leeber <florian@ubports.com>  Fri, 13 Jul 2018 20:50:04 +0200
+
+ubports-qa-scripts (0.1+ubports) xenial; urgency=medium
+
+  * Initial release
+
+ -- Florian Leeber <florian@ubports.com>  Thu, 12 Jul 2018 23:16:28 +0200
