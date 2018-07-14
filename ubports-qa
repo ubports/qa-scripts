@@ -103,7 +103,7 @@ def update(args):
     apt_upgrade()
     umount()
 
-parser = argparse.ArgumentParser(description='UBports qa scripts')
+parser = argparse.ArgumentParser(description='UBports QA scripts')
 subparsers = parser.add_subparsers(help='')
 
 parser_inst = subparsers.add_parser('install', help='Add pr to install')
