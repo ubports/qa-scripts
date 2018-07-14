@@ -121,5 +121,8 @@ parser_list.set_defaults(func=list)
 parser_up = subparsers.add_parser('update', help='Update system using apt')
 parser_up.set_defaults(func=update)
 
-args = parser.parse_args()
-args.func(args)
+try:
+    args = parser.parse_args()
+    args.func(args)
+except:
+    parser.print_help()
