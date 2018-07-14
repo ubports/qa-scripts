@@ -1,16 +1,22 @@
 # qa-scripts
-Messy scrips for updating your device using ubports dev ppa
 
-
-## Install
-
-```
-wget -qO - https://raw.githubusercontent.com/ubports/qa-scripts/master/qa-install | bash
-```
-
+A simple python script to test pull-requests on UBports repositories.
 
 ## Usage
 
-* `qa-add` - adds and setup ubports dev ppa
-* `qa-update` - Updates from the dev ppa
-* `qa-remove` - Remove dev ppa and revert back packages
+```
+phablet@ubuntu-phablet:~$ ubports-qa
+usage: ubports-qa [-h] {install,remove,list,update} ...
+
+UBports QA scripts
+
+positional arguments:
+  {install,remove,list,update}
+    install             Add pr to install
+    remove              Remove installed repo
+    list                List installed repos
+    update              Update system using apt
+
+optional arguments:
+  -h, --help            show this help message and exit
+```
