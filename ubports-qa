@@ -16,7 +16,8 @@ def mount():
     subprocess.call(["mount", "-o", "rw,remount", "/"])
 
 def unmount():
-    subprocess.call(["mount", "-o", "ro,remount", "/"])
+    if not os.path.exists("/userdata/.writable_image"):
+        subprocess.call(["mount", "-o", "ro,remount", "/"])
 
 def apt_update():
     subprocess.call(["apt", "update"])
