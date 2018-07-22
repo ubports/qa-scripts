@@ -119,22 +119,22 @@ def update(args):
     apt_upgrade()
     unmount()
 
-parser = argparse.ArgumentParser(description='UBports QA scripts')
+parser = argparse.ArgumentParser(description='The UBports QA scripts allow you to efficiently manage PPAs from repo.ubports.com for testing deb components. See http://docs.ubports.com/en/latest/about/process/ppa.html.')
 subparsers = parser.add_subparsers(help='')
 
-parser_install = subparsers.add_parser('install', help='Install a pull-request')
-parser_install.add_argument('repo', type=str, help='Name of the git repository')
-parser_install.add_argument('pr', type=int, help='Pull-request to install (numeric ID)', nargs='?', default=-1)
+parser_install = subparsers.add_parser('install', help='Install a ppa or pull-request', description='Install a ppa or pull-request. See http://docs.ubports.com/en/latest/about/process/ppa.html.')
+parser_install.add_argument('repo', type=str, help='Name of a PPA on repo.ubports.com. Alternatively, if the \'pr\' argument is provided, the name of a git repository can be specified to automatically add the PPA from a pull-request.')
+parser_install.add_argument('pr', type=int, help='Numeric ID of a pull-request on the git repository specified in the \'repo\' argument. If \'repo\' is supposed to be the name of a ppa, the \'pr\' argument should not be specified.', nargs='?', default=-1)
 parser_install.set_defaults(func=install)
 
-parser_remove = subparsers.add_parser('remove', help='Remove installed repository / branch')
-parser_remove.add_argument('repo', type=str, help='Name of the repository / branch')
+parser_remove = subparsers.add_parser('remove', help='Remove and uninstall a PPA', description='Remove and uninstall a ppa')
+parser_remove.add_argument('repo', type=str, help='Name of the ppa')
 parser_remove.set_defaults(func=remove)
 
-parser_list = subparsers.add_parser('list', help='List installed repositories / branches')
+parser_list = subparsers.add_parser('list', help='List installed PPAs', description='List installed PPAs')
 parser_list.set_defaults(func=list)
 
-parser_update = subparsers.add_parser('update', help='Update system using apt')
+parser_update = subparsers.add_parser('update', help='Update all packages using apt', description='Update all packages using apt')
 parser_update.set_defaults(func=update)
 
 try:
