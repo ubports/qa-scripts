@@ -1,5 +1,11 @@
 #!/usr/bin/python3
 
+"""
+The UBports QA scripts allow you to efficiently manage PPAs from repo.ubports.com for testing deb components.
+Copyright 2018 UBports Foundation
+Licensed GPL v. 3 or later
+"""
+
 import requests, subprocess, os, argparse
 from enum import Enum
 
