@@ -125,4 +125,6 @@ try:
     args = parser.parse_args()
     args.func(args)
 except:
-    parser.print_help()
+    try: args
+    except: pass
+    else: parser.print_help()
