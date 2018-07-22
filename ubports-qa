@@ -107,6 +107,7 @@ def remove(args):
     if not list_exists(args.repo):
         die("Repo %s is not installed" % args.repo)
     remove_list(args.repo)
+    update(args)
 
 def list(args):
     print(" ".join(list_lists()))
