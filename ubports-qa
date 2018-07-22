@@ -7,10 +7,16 @@ GITHUB_API_PULLREQUEST="https://api.github.com/repos/ubports/%s/pulls/%s"
 JENKINS_API_BUILD="https://ci.ubports.com/blue/rest/organizations/jenkins/pipelines/%s/branches/%s"
 REPO="http://repo.ubports.com/dists/%s/main/binary-armhf/Packages"
 
+is_root = (os.geteuid() == 0)
+
 class Status(Enum):
     SUCCESS = 1
     BULDING = 2
     FAILED = 3
+
+def ensure_root():
+    if not is_root:
+        die("Insufficient permissions, please run with sudo.")
 
 def mount():
     subprocess.call(["mount", "-o", "rw,remount", "/"])
@@ -78,6 +84,7 @@ def die(m):
     exit()
 
 def install(args):
+    ensure_root()
     if args.pr != -1:
         ref = get_issue_branch(args.repo, args.pr);
         status = get_issue_status(args.repo, ref);
@@ -90,6 +97,7 @@ def install(args):
     apt_upgrade()
 
 def remove(args):
+    ensure_root()
     if not list_exists(args.repo):
         die("Repo %s is not installed" % args.repo)
     remove_list(args.repo)
@@ -98,6 +106,7 @@ def list(args):
     print(" ".join(list_lists()))
 
 def update(args):
+    ensure_root()
     mount()
     apt_update()
     apt_upgrade()
@@ -124,7 +133,9 @@ parser_update.set_defaults(func=update)
 try:
     args = parser.parse_args()
     args.func(args)
-except:
-    try: args
-    except: pass
-    else: parser.print_help()
+except IOError as e:
+    ensure_root()
+    die(e)
+except AttributeError as e:
+    parser.print_help()
+    exit()
