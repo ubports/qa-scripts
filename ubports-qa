@@ -48,6 +48,8 @@ def list_lists():
 def add_list(branch):
     if list_exists(branch):
         return
+    if requests.get("http://repo.ubports.com/dists/" + branch).status_code != 200:
+        die("PPA not found")
     with open(get_list_file(branch),"w+") as list:
         list.write("deb http://repo.ubports.com/ %s main" % branch)
 
@@ -58,12 +60,15 @@ def remove_list(branch):
     os.remove(get_list_file(branch))
 
 def get_github_pr(repo, num):
-    return requests.get(GITHUB_API_PULLREQUEST % (repo, num)).json()
+    ret = requests.get(GITHUB_API_PULLREQUEST % (repo, num))
+    if ret.status_code != 200:
+        die("Pull-Request not found")
+    return ret.json()
 
 def get_jenkins_build(repo, ref):
     ret = requests.get(JENKINS_API_BUILD % (repo, ref))
     if ret.status_code != 200:
-        die("Not found")
+        die("Jenkins build not found")
     return ret.json()
 
 def get_issue_status(repo, ref):
