@@ -86,6 +86,7 @@ def die(m):
 def install(args):
     ensure_root()
     if args.pr != -1:
+        args.repo.replace("ubports/", "")
         ref = get_issue_branch(args.repo, args.pr);
         status = get_issue_status(args.repo, ref);
         if status == Status.FAILED:
