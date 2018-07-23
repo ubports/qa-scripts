@@ -1,0 +1,10 @@
+# -*- shell-script -*-
+
+function _ubports-qa()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    opts="install remove list update"
+    
+    COMPREPLY=( $(compgen -W "${opts}" -- ${cur} ) )
+} && complete -F _ubports-qa ubports-qa && complete -F _ubports-qa ./ubports-qa
