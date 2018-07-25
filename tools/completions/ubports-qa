@@ -1,10 +1,62 @@
 # -*- shell-script -*-
 
-function _ubports-qa()
+uqd()
 {
-    local cur
-    cur="${COMP_WORDS[COMP_CWORD]}"
-    opts="install remove list update"
-    
-    COMPREPLY=( $(compgen -W "${opts}" -- ${cur} ) )
-} && complete -F _ubports-qa ubports-qa && complete -F _ubports-qa ./ubports-qa
+    #echo -n $@ >&2
+    true
+}
+
+_installed_qas () 
+{ 
+    # COMPREPLY=($( compgen -W "$( PATH="$PATH:/sbin" lsmod |         awk '{if (NR != 1) print $1}' )" -- "$1" ))
+    # COMPREPLY=($( compgen -W "$( lsmod | awk '{if (NR != 1) print $1}' )" -- "$1" ))
+    COMPREPLY=($( compgen -W "$( echo $( ubports-qa ) )" -- "$1" ))
+}
+
+
+_ubports-qa()
+{
+    local cur cmd opts params list
+    _init_completion -s || return 
+    #cur="${COMP_WORDS[COMP_CWORD]}"
+    cmd="${COMP_WORDS[1]}"
+    #uqd "1(${cmd}:${cur})"
+
+    case "${cmd}" in
+	"install")
+	    uqd I
+	    #params="--help"
+	    opts="asdf jkl aaaa"
+	    ;;
+	"remove")
+	    #uqd "R"
+	    #params="--help"
+	    # opts="rubl roble"
+	    # opts=`echo rubl roble`
+	    # opts=`ubports-qa list | dos2unix | tr "\n" " " | grep -Eve '^ *$' `
+	    # opts=$( lsmod | awk '{if (NR != 1) print $1}' )
+	    _installed_qas "$cur"
+	    return 0
+	    uqd "R(${opts})"
+	    ;;
+	"list")
+	    uqd L
+	    #params="--help"
+	    opts=""
+	    ;;
+	"update")
+	    uqd U
+	    #params="--help"
+	    opts=""
+	    ;;
+	*)
+	    uqd N
+	    #params="--help"
+	    opts="install remove list update"
+	    ;;
+    esac
+    #uqd "2(${params})"
+    uqd "3(${opts})"
+    COMPREPLY=( $(compgen -W "${params} ${opts}" -- ${cur} ) )
+
+} && complete -F _ubports-qa ubports-qa
