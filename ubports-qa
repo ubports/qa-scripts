@@ -11,10 +11,10 @@ import argparse
 from enum import Enum
 import requests
 
-GITHUB_API_PULLREQUEST="https://api.github.com/repos/ubports/{repo}/pulls/{num}"
-JENKINS_API_BUILD="https://ci.ubports.com/blue/rest/organizations/jenkins/pipelines/{repo}/branches/{ref}"
+GITHUB_API_PULLREQUEST = "https://api.github.com/repos/ubports/{repo}/pulls/{num}"
+JENKINS_API_BUILD = "https://ci.ubports.com/blue/rest/organizations/jenkins/pipelines/{repo}/branches/{ref}"
 
-is_root = (os.geteuid() == 0)
+IS_ROOT = (os.geteuid() == 0)
 
 class Status(Enum):
     SUCCESS = 1
@@ -34,7 +34,7 @@ class WritableRootFS():
     def __enter__(self):
         self.attempt_writable_mount()
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, exc_type, value, traceback):
         self.attempt_unmount()
 
     @classmethod
@@ -55,7 +55,7 @@ class WritableRootFS():
                 print_error("Please consider rebooting your device.")
 
 def ensure_root():
-    if not is_root:
+    if not IS_ROOT:
         die("Insufficient permissions, please run with sudo.")
 
 def apt_update():
@@ -81,16 +81,16 @@ def list_exists(branch):
 
 def list_lists():
     return [f.split("ubports-")[1].split(".list")[0]
-           for f in os.listdir("/etc/apt/preferences.d")
-           if os.path.isfile(f) and f.startswith("ubports-")]
+            for f in os.listdir("/etc/apt/preferences.d")
+            if os.path.isfile(f) and f.startswith("ubports-")]
 
 def add_list(branch):
     if list_exists(branch):
         return
     if requests.get("http://repo.ubports.com/dists/" + branch).status_code != 200:
         die("PPA not found")
-    with open(get_list_file(branch),"w+") as list:
-        list.write("deb http://repo.ubports.com/ {} main".format(branch))
+    with open(get_list_file(branch), "w+") as repo_list:
+        repo_list.write("deb http://repo.ubports.com/ {} main".format(branch))
 
 def remove_list(branch):
     # If it does not exist, just ignore
@@ -117,22 +117,23 @@ def get_issue_status(repo, ref):
         return Status.SUCCESS
     elif build["result"] == "BULDING":
         return Status.BULDING
-    else:
-        return Status.FAILED
+
+    return Status.FAILED
 
 def get_issue_branch(repo, num):
     return get_github_pr(repo, num)["head"]["ref"]
 
-def print_error(error):
-    """Prints red text found in error"""
-    print('\033[91m' + error + '\033[0m')
+def print_error(error_message):
+    """Prints error_message in red"""
+    print('\033[91m' + error_message + '\033[0m')
 
-def die(m):
-    """Prints red text m and exits with status 3"""
-    print_error(m)
+def die(error_message):
+    """Prints error_message in red and exits with status 3"""
+    print_error(error_message)
     exit(3)
 
 def install_command(args):
+    """Install a PPA or Pull Request"""
     if args.pr != -1:
         args.repo.replace("ubports/", "")
         ref = get_issue_branch(args.repo, args.pr)
@@ -147,6 +148,7 @@ def install_command(args):
         apt_upgrade()
 
 def remove_command(args):
+    """Remove and uninstall a PPA"""
     if not list_exists(args.repo):
         die("Repo {} is not installed".format(args.repo))
     with WritableRootFS():
@@ -155,9 +157,11 @@ def remove_command(args):
         apt_upgrade()
 
 def list_command(args):
+    """List installed PPAs"""
     print(" ".join(list_lists()))
 
 def update_command(args):
+    """Update all packages using apt"""
     with WritableRootFS():
         apt_update()
         apt_upgrade()
@@ -165,24 +169,24 @@ def update_command(args):
 parser = argparse.ArgumentParser(description='The UBports QA scripts allow you to efficiently manage PPAs from repo.ubports.com for testing deb components. See http://docs.ubports.com/en/latest/about/process/ppa.html.')
 subparsers = parser.add_subparsers(help='')
 
-parser_install = subparsers.add_parser('install', help='Install a ppa or pull-request', description='Install a ppa or pull-request. See http://docs.ubports.com/en/latest/about/process/ppa.html.')
+parser_install = subparsers.add_parser('install', help=install_command.__doc__, description='Install a ppa or pull-request. See http://docs.ubports.com/en/latest/about/process/ppa.html.')
 parser_install.add_argument('repo', type=str, help='Name of a PPA on repo.ubports.com. Alternatively, if the \'pr\' argument is provided, the name of a git repository can be specified to automatically add the PPA from a pull-request.')
 parser_install.add_argument('pr', type=int, help='Numeric ID of a pull-request on the git repository specified in the \'repo\' argument. If \'repo\' is supposed to be the name of a ppa, the \'pr\' argument should not be specified.', nargs='?', default=-1)
 parser_install.set_defaults(func=install_command)
 
-parser_remove = subparsers.add_parser('remove', help='Remove and uninstall a PPA', description='Remove and uninstall a ppa')
+parser_remove = subparsers.add_parser('remove', help=remove_command.__doc__, description='Remove and uninstall a ppa')
 parser_remove.add_argument('repo', type=str, help='Name of the ppa')
 parser_remove.set_defaults(func=remove_command)
 
-parser_list = subparsers.add_parser('list', help='List installed PPAs', description='List installed PPAs')
+parser_list = subparsers.add_parser('list', help=list_command.__doc__, description='List installed PPAs')
 parser_list.set_defaults(func=list_command)
 
-parser_update = subparsers.add_parser('update', help='Update all packages using apt', description='Update all packages using apt')
+parser_update = subparsers.add_parser('update', help=update_command.__doc__, description='Update all packages using apt')
 parser_update.set_defaults(func=update_command)
 
 try:
-    args = parser.parse_args()
-    args.func(args)
+    ARGS = parser.parse_args()
+    ARGS.func(ARGS)
 except IOError as e:
     # We weren't allowed to do something with a file.
     # Either we aren't root or the disk is read-only.
