@@ -34,3 +34,8 @@ optional arguments:
 | `sudo ubports-qa remove xenial_-_somebranch` | Remove the `xenial_-_somebranch` ppa and upgrade all packages |
 | `ubports-qa list` | List all installed testing-PPAs |
 | `sudo ubports-qa update` | Upgrade all packages |
+
+
+### Contributing
+
+When modifying the ubports-qa script, run [black](https://github.com/ambv/black) before you commit. This helps to reduce the diffs between commits and keeps formatting simple.
