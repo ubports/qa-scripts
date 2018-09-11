@@ -216,7 +216,10 @@ parser_install.add_argument(
 parser_install.set_defaults(func=install_command)
 
 parser_remove = subparsers.add_parser(
-    "remove", help=remove_command.__doc__, description="Remove and uninstall a ppa"
+    "remove",
+    aliases=["uninstall"],
+    help=remove_command.__doc__,
+    description="Remove and uninstall a ppa",
 )
 parser_remove.add_argument("repo", type=str, help="Name of the ppa")
 parser_remove.set_defaults(func=remove_command)
