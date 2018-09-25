@@ -138,10 +138,6 @@ def get_issue_status(repo, ref):
     return Status.FAILED
 
 
-def get_issue_branch(repo, num):
-    return get_github_pr(repo, num)["head"]["ref"]
-
-
 def print_error(error_message):
     """Prints error_message in red"""
     print("\033[91m" + error_message + "\033[0m")
@@ -157,7 +153,7 @@ def install_command(args):
     """Install a PPA or Pull Request"""
     if args.pr != -1:
         args.repo.replace("ubports/", "")
-        ref = get_issue_branch(args.repo, args.pr)
+        ref = 'PR-%s' % args.pr
         status = get_issue_status(args.repo, ref)
         if status == Status.FAILED:
             die("Issue failed to build")
