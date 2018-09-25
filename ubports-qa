@@ -19,7 +19,7 @@ IS_ROOT = os.geteuid() == 0
 
 class Status(Enum):
     SUCCESS = 1
-    BULDING = 2
+    BUILDING = 2
     FAILED = 3
 
 
