@@ -153,7 +153,7 @@ def install_command(args):
     """Install a PPA or Pull Request"""
     if args.pr != -1:
         args.repo.replace("ubports/", "")
-        ref = 'PR-%s' % args.pr
+        ref = 'PR-' + str(args.pr)
         status = get_issue_status(args.repo, ref)
         if status == Status.FAILED:
             die("Issue failed to build")
