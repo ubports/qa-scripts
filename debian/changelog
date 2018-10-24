@@ -1,5 +1,11 @@
 ubports-qa-scripts (0.2) xenial; urgency=medium
 
+  * Add shell completion
+
+ -- Peter Putz <p.putz@yahoo.de>  Wed, 24 Oct 2018 23:35:01 +0200
+
+ubports-qa-scripts (0.2) xenial; urgency=medium
+
   * Update code style
   * Fix script not mounting root filesystem read-write on several subcommands
 
