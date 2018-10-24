@@ -26,7 +26,7 @@ _ubports-qa()
 	"install")
 	    uqd I
 	    #params="--help"
-	    opts="asdf jkl aaaa"
+	    opts="asdf jkl aaaa x"
 	    ;;
 	"remove")
 	    #uqd "R"
