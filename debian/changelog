@@ -1,4 +1,4 @@
-ubports-qa-scripts (0.2) xenial; urgency=medium
+ubports-qa-scripts (0.3) xenial; urgency=medium
 
   * Add shell completion
 
