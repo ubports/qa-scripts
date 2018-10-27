@@ -92,10 +92,9 @@ def list_exists(branch):
 def list_lists():
     return [
         f.split("ubports-")[1].split(".list")[0]
-        for f in os.listdir("/etc/apt/preferences.d")
-        if os.path.isfile(f) and f.startswith("ubports-")
+        for f in os.listdir("/etc/apt/sources.list.d/")
+        if os.path.isfile("/etc/apt/sources.list.d/" + f) and f.startswith("ubports-")
     ]
-
 
 def add_list(branch):
     if list_exists(branch):
