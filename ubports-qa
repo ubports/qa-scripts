@@ -200,12 +200,12 @@ parser_install = subparsers.add_parser(
 parser_install.add_argument(
     "repo",
     type=str,
-    help="Name of a PPA on repo.ubports.com. Alternatively, if the 'pr' argument is provided, the name of a git repository can be specified to automatically add the PPA from a pull-request.",
+    help="Name of a PPA on repo.ubports.com. Note that for certain branches on github, PPAs are automatically created. For example branch names that start with \"xenial_-_\" have such automatic PPAs. Example: 'ubports-qa install xenial_-_sessionrestore'. Alternatively, see below how 'repo' is interpreted if the 'pr' argument is used.",
 )
 parser_install.add_argument(
     "pr",
     type=int,
-    help="Numeric ID of a pull-request on the git repository specified in the 'repo' argument. If 'repo' is supposed to be the name of a ppa, the 'pr' argument should not be specified.",
+    help="Numeric ID of a pull-request. When this 'pr' parameter is used, then the 'repo' parameter is interpreted as the name of a github repository. Example: 'ubports-qa calendar-app 123'",
     nargs="?",
     default=-1,
 )
