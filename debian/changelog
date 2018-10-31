@@ -1,3 +1,10 @@
+ubports-qa-scripts (0.3) xenial; urgency=medium
+
+  * Log using a logger rather than print statements
+  * Fix installation of PR repos
+
+ -- Dalton Durst <dalton@ubports.com>  Mon, 29 Oct 2018 15:38:32 -0500
+
 ubports-qa-scripts (0.2) xenial; urgency=medium
 
   * Update code style
