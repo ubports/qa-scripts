@@ -81,6 +81,7 @@ def apt_upgrade():
     LOG.debug("Running 'apt upgrade'.")
     try:
         subprocess.run(["apt", "upgrade"], check=True)
+        subprocess.run(["apt", "autoremove"], check=True)
     except subprocess.CalledProcessError:
         LOG.error("Failed to run 'apt upgrade'. See the output above for details.")
 
