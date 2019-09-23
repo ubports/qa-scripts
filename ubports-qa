@@ -102,12 +102,17 @@ def list_exists(branch):
     return os.path.isfile(get_list_file(branch))
 
 
+def pref_exists(branch):
+    return os.path.isfile(get_pref_file(branch))
+
+
 def list_lists():
     return [
         f.split("ubports-")[1].split(".list")[0]
         for f in os.listdir("/etc/apt/sources.list.d/")
         if os.path.isfile("/etc/apt/sources.list.d/" + f) and f.startswith("ubports-")
     ]
+
 
 def add_list(branch):
     if list_exists(branch):
@@ -118,11 +123,29 @@ def add_list(branch):
         repo_list.write("deb http://repo.ubports.com/ {} main".format(branch))
 
 
+def add_pref(branch):
+    if pref_exists(branch):
+        return
+    with open(get_pref_file(branch), "w+") as pref:
+        # TODO: edit and set own pin priority to allow up/down/side-grade without
+        # removal of repo etc
+        pref.write("Package: *\n"
+                   "Pin: release o=UBports,a={}\n"
+                   "Pin-Priority: 2000\n".format(branch))
+
+
 def remove_list(branch):
     # If it does not exist, just ignore
     if not list_exists(branch):
         return
     os.remove(get_list_file(branch))
+
+
+def remove_pref(branch):
+    # If it does not exist, just ignore
+    if not pref_exists(branch):
+        return
+    os.remove(get_pref_file(branch))
 
 
 def get_github_pr(repo, num):
@@ -180,6 +203,7 @@ def install_command(args):
 
     with WritableRootFS():
         add_list(repository_name)
+        add_pref(repository_name)
         apt_update()
         apt_upgrade()
 
@@ -198,6 +222,7 @@ def remove_command(args):
         die("Repo {} is not installed".format(repository))
     with WritableRootFS():
         remove_list(repository)
+        remove_pref(repository)
         apt_update()
         apt_upgrade()
 
