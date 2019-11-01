@@ -131,7 +131,7 @@ def add_pref(branch):
         # removal of repo etc
         pref.write("Package: *\n"
                    "Pin: release o=UBports,a={}\n"
-                   "Pin-Priority: 2000\n".format(branch))
+                   "Pin-Priority: 2001\n".format(branch))
 
 
 def remove_list(branch):
