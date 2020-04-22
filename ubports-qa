@@ -50,9 +50,14 @@ class WritableRootFS:
         LOG.debug("Attempting to mount rootfs read-write.")
         ensure_root()
         subprocess.run(["mount", "-o", "rw,remount", "/"])
+        LOG.debug("Making sure we have enough free space for archives.")
+        subprocess.run(["mount", "-t", "tmpfs", "tmpfs", "/var/cache/apt/archives"])
 
     @classmethod
     def attempt_unmount(cls):
+        LOG.debug("Unmounting tmpfs")
+        ensure_root()
+        subprocess.run(["umount", "/var/cache/apt/archives"])
         LOG.debug("Attempting to mount rootfs read-only.")
         if not os.path.exists("/userdata/.writable_image"):
             ensure_root()
