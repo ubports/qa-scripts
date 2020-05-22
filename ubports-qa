@@ -167,7 +167,8 @@ def get_jenkins_build(repo, ref):
 
 
 def get_issue_status(repo, ref):
-    build = get_jenkins_build(repo, ref)["latestRun"]
+    # Prepend "ubports/" because all CI jobs start with it.
+    build = get_jenkins_build("ubports/" + repo, ref)["latestRun"]
     LOG.debug(build)
     if build["result"] == "SUCCESS":
         return Status.SUCCESS
@@ -186,17 +187,18 @@ def die(error_message):
 def install_command(args):
     """Install a PPA or Pull Request"""
     if args.pr is not NO_PR:
-        args.repo.replace("ubports/", "")
+        # Support both with or without ubports/ prefix.
+        github_repo = args.repo.replace("ubports/", "")
         ref = "PR-" + str(args.pr)
         LOG.debug(
-            "Checking repository ubports/" + args.repo + " for PR #" + str(args.pr)
+            "Checking repository ubports/" + github_repo + " for PR #" + str(args.pr)
         )
-        status = get_issue_status(args.repo, ref)
+        status = get_issue_status(github_repo, ref)
         if status == Status.FAILED:
             die("Issue failed to build")
         if status == Status.BUILDING:
             die("Issue is currently building")
-        repository_name = ref
+        repository_name = "PR_{repo}_{pr_num}".format(repo=github_repo, pr_num=args.pr)
     else:
         repository_name = args.repo
         LOG.debug("No PR set, installing " + repository_name)
