@@ -1,0 +1,15 @@
+#!/bin/bash
+_ubports-qa()
+{
+    local cur prev opts
+    case $COMP_CWORD in
+	    1) opts=$(ubports-qa -h |awk '/   install/,/    update/{print $1}');;
+	    *);;
+    esac
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    COMPREPLY=( $(compgen -W "$opts" -- ${cur}) )
+    return 0
+}
+complete -F _ubports-qa ubports-qa
