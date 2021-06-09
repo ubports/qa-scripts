@@ -1,15 +1,18 @@
 #!/bin/bash
 _ubports-qa()
 {
-    local cur prev opts
+    local cur prev
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     case $COMP_CWORD in
-	    1) opts=$(ubports-qa -h |awk '/   install/,/    update/{print $1}');;
-	    2)  [ ${prev} = "remove" ] && opts=$(ubports-qa list);;
+	    1) COMPREPLY=( $(compgen -W "$(ubports-qa -h |awk '/   install/,/    update/{print $1}')" -- ${cur}) );;
+	    2)  [ ${prev} = "remove" ] && COMPREPLY=( $(compgen -W "$(ubports-qa list)" -- ${cur}) );;
 	    *);;
     esac
-    COMPREPLY=( $(compgen -W "$opts" -- ${cur}) )
+    case $cur in
+	    -*) COMPREPLY=( $(compgen -W "$(_parse_usage $1)" -- ${cur}) );;
+    esac
+
     return 0
 }
 complete -F _ubports-qa ubports-qa
